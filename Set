@@ -1,0 +1,58 @@
+type Set struct {
+	Data map[string]interface{}
+	sync.RWMutex
+}
+
+func New() *Set {
+	return &Set{
+		Data: map[string]interface{}{},
+	}
+}
+
+func (s *Set) Add(key string, value interface{}) {
+	s.Lock()
+	defer s.Unlock()
+	s.Data[key] = value
+}
+
+func (s *Set) Contains(key string) bool {
+	s.RLock()
+	defer s.RUnlock()
+	if s.Data[key] != nil {
+		return true
+	}
+	return false
+}
+
+func (s *Set) Remove(key string) {
+	s.Lock()
+	defer s.Unlock()
+	delete(s.Data, key)
+}
+
+func (s *Set) Len() int {
+	return len(s.Data)
+}
+
+func (s *Set) Clear() {
+	s.Lock()
+	defer s.Unlock()
+	s.Data = map[string]interface{}{}
+}
+
+func (s *Set) IsEmpty() bool {
+	if len(s.Data) == 0 {
+		return true
+	}
+	return false
+}
+
+func (s *Set) ToList() []interface{} {
+	s.RLock()
+	defer s.RUnlock()
+	var list []interface{}
+	for item := range s.Data {
+		list = append(list, item)
+	}
+	return list
+}
