@@ -51,7 +51,7 @@ func (s *Set) ToList() []interface{} {
 	s.RLock()
 	defer s.RUnlock()
 	var list []interface{}
-	for item := range s.Data {
+	for _, item := range s.Data {
 		list = append(list, item)
 	}
 	return list
